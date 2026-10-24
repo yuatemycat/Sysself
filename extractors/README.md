@@ -6,19 +6,23 @@ High-fidelity binary extractors and forensic analysis scripts designed to recove
 
 | Tool | Target Binary | Architecture / Packager | Extraction Method |
 |---|---|---|---|
-| [`extract_agy_templates.py`](file:///E:/02_Projects/Sysself/extractors/extract_agy_templates.py) | `agy.exe` (Antigravity CLI) | Go PE x86_64 (`embed.FS`) | Traverses 48-byte Go `embed.file` descriptor tables from image base |
+| [`extract_agy_templates.py`](file:///E:/02_Projects/Sysself/extractors/extract_agy_templates.py) | `agy.exe` (Antigravity CLI / Gemini) | Go PE x86_64 (`embed.FS`) | Traverses 48-byte Go `embed.file` descriptor tables from image base |
 | [`extract_claude_templates.py`](file:///E:/02_Projects/Sysself/extractors/extract_claude_templates.py) | `claude.exe` (Claude Code) | Bun Standalone Executable | Scans PE `.bun` payload and extracts JS prompt assembler functions (`lin`, `Opi`, `Uvs`) |
+| [`extract_grok_templates.py`](file:///E:/02_Projects/Sysself/extractors/extract_grok_templates.py) | `grok.exe` (xAI Grok Build CLI) | Rust Native Runtime (`~/.grok`) | Scans runtime sessions, extracts XML boundary tags, bundled agents & personas |
 
 ## Quick Usage via `sysself` CLI
 
 ```bash
-# Extract Antigravity templates from default agy.exe
-python sysself.py extract agy
+# Extract Antigravity / Gemini templates
+python sysself.py extract gemini
 
-# Extract Claude Code templates from default claude.exe
+# Extract Claude Code templates
 python sysself.py extract claude
 
-# Extract both and verify integrity
+# Extract Grok CLI prompts and personas
+python sysself.py extract grok
+
+# Extract all suites simultaneously
 python sysself.py extract all
 
 # Check binary discovery and environment status

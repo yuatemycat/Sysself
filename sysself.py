@@ -37,24 +37,35 @@ def get_binary_paths():
         os.path.join(r"E:\03_Devops", "claude", "bin", "claude.exe"),
     ]
 
+    # 3. Grok CLI candidates
+    grok_candidates = [
+        os.path.expanduser(r"~\.grok\bin\grok.exe"),
+        os.path.join(r"E:\03_Devops", "grok", "bin", "grok.exe"),
+    ]
+
     agy_path = next((p for p in agy_candidates if os.path.isfile(p)), None)
     claude_path = next((p for p in claude_candidates if os.path.isfile(p)), None)
+    grok_path = next((p for p in grok_candidates if os.path.isfile(p)), None)
 
-    return agy_path, claude_path
+    return agy_path, claude_path, grok_path
 
 def cmd_status(args):
     print("==================================================")
     print("  Sysself System Prompt & Ruleset Workspace Status")
     print("==================================================")
     
-    agy_bin, claude_bin = get_binary_paths()
+    agy_bin, claude_bin, grok_bin = get_binary_paths()
     print(f"\n[+] Local Binaries:")
     print(f"  - Antigravity CLI (agy): {agy_bin or 'NOT FOUND'}")
     print(f"  - Claude Code CLI      : {claude_bin or 'NOT FOUND'}")
+    print(f"  - Grok CLI (xAI Build) : {grok_bin or 'NOT FOUND'}")
 
     agy_tmpls = glob.glob(os.path.join(BASE_DIR, "prompts", "antigravity", "templates", "*.tmpl"))
     claude_mods = glob.glob(os.path.join(BASE_DIR, "prompts", "claude_code", "modules", "*.md"))
     claude_raws = glob.glob(os.path.join(BASE_DIR, "prompts", "claude_code", "raw", "*.txt"))
+    grok_mods = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "modules", "*.md"))
+    grok_agents = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "bundled_agents", "*.md"))
+    grok_personas = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "personas", "*.toml"))
     rules_files = glob.glob(os.path.join(BASE_DIR, "rules", "*.md"))
     extract_tools = glob.glob(os.path.join(BASE_DIR, "extractors", "tools", "*.py"))
 
@@ -62,13 +73,15 @@ def cmd_status(args):
     print(f"  - Antigravity Templates : {len(agy_tmpls)} files")
     print(f"  - Claude Code Modules   : {len(claude_mods)} files")
     print(f"  - Claude Code Raw Texts : {len(claude_raws)} files")
+    print(f"  - Grok CLI Modules      : {len(grok_mods)} files")
+    print(f"  - Grok Bundled Personas : {len(grok_agents) + len(grok_personas)} items")
     print(f"  - Invariant Rulesets    : {len(rules_files)} files")
     print(f"  - Extraction Tools      : {len(extract_tools)} scripts")
     print("\n[OK] Workspace is healthy and synchronized.")
 
 def cmd_extract(args):
     target = args.target.lower()
-    agy_bin, claude_bin = get_binary_paths()
+    agy_bin, claude_bin, grok_bin = get_binary_paths()
 
     if target in ("agy", "gemini", "antigravity", "all"):
         bin_path = args.bin or agy_bin
@@ -98,6 +111,15 @@ def cmd_extract(args):
             if res.returncode != 0:
                 print("[-] Failed to extract Claude Code templates.", file=sys.stderr)
 
+    if target in ("grok", "all"):
+        grok_dir = os.path.expanduser(r"~\.grok")
+        script = os.path.join(BASE_DIR, "extractors", "extract_grok_templates.py")
+        out_dir = os.path.join(BASE_DIR, "prompts", "grok")
+        print(f"[*] Extracting Grok CLI prompt assets from: {grok_dir}")
+        res = subprocess.run([sys.executable, script, "--grok-dir", grok_dir, "--out", out_dir])
+        if res.returncode != 0:
+            print("[-] Failed to extract Grok CLI prompt assets.", file=sys.stderr)
+
 def cmd_rules(args):
     print("==================================================")
     print("  Authoritative Engineering Invariant Rulesets")
@@ -121,7 +143,7 @@ def main():
 
     # Extract
     extract_parser = subparsers.add_parser("extract", help="Run binary extractors")
-    extract_parser.add_argument("target", choices=["agy", "claude", "gemini", "antigravity", "all"], help="Extraction target (agy/gemini, claude, or all)")
+    extract_parser.add_argument("target", choices=["agy", "claude", "gemini", "antigravity", "grok", "all"], help="Extraction target (agy/gemini, claude, grok, or all)")
     extract_parser.add_argument("--bin", help="Explicit path to target binary (.exe)")
 
     # Rules

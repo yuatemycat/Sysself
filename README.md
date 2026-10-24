@@ -9,13 +9,15 @@
 ```mermaid
 flowchart TD
     subgraph Binaries["Upstream Agent Executables"]
-        AGY["agy.exe (Google Antigravity CLI)"]
+        AGY["agy.exe (Google Antigravity CLI / Gemini)"]
         CLAUDE["claude.exe (Anthropic Claude Code)"]
+        GROK["grok.exe (xAI Grok Build CLI)"]
     end
 
     subgraph Extractors["Sysself Extraction Suite"]
         EXT_AGY["extract_agy_templates.py (Go embed.FS)"]
         EXT_CLAUDE["extract_claude_templates.py (Bun PE)"]
+        EXT_GROK["extract_grok_templates.py (Rust Runtime / XML)"]
         TOOLS["50+ Reverse Engineering Probes (tools/)"]
         CLI["sysself.py Unified CLI"]
     end
@@ -23,15 +25,19 @@ flowchart TD
     subgraph Output["Artifact Repositories"]
         P_AGY["prompts/antigravity (17 Go .tmpl & Assembled)"]
         P_CLAUDE["prompts/claude_code (14 Modules & Raw)"]
+        P_GROK["prompts/grok (11 Modules, Personas & Raw)"]
         RULES["rules/ (11 Invariant Rulesets)"]
     end
 
     AGY --> EXT_AGY
     CLAUDE --> EXT_CLAUDE
+    GROK --> EXT_GROK
     EXT_AGY --> P_AGY
     EXT_CLAUDE --> P_CLAUDE
+    EXT_GROK --> P_GROK
     CLI --> EXT_AGY
     CLI --> EXT_CLAUDE
+    CLI --> EXT_GROK
 ```
 
 ## Quick Start
@@ -43,13 +49,16 @@ python sysself.py status
 
 ### 2. Extract Official Prompts
 ```bash
-# Extract Google Antigravity templates from agy.exe
-python sysself.py extract agy
+# Extract Google Antigravity / Gemini templates from agy.exe
+python sysself.py extract gemini
 
 # Extract Anthropic Claude Code modules from claude.exe
 python sysself.py extract claude
 
-# Extract both simultaneously
+# Extract xAI Grok Build prompts and personas from ~/.grok
+python sysself.py extract grok
+
+# Extract all agent suites simultaneously
 python sysself.py extract all
 ```
 
@@ -65,16 +74,23 @@ python sysself.py rules
 ```
 Sysself/
 ├── prompts/
-│   ├── antigravity/
+│   ├── antigravity/            # Google DeepMind Antigravity & Gemini CLI
 │   │   ├── assembled/          # Complete assembled runtime prompt
 │   │   └── templates/          # 17 Go embed.FS templates (.tmpl)
-│   └── claude_code/
-│       ├── assembled/          # Composed lin() prompt markdown
-│       ├── modules/            # 14 decompiled functional modules
-│       └── raw/                # Unescaped JS bundle strings & dumps
+│   ├── claude_code/            # Anthropic Claude Code
+│   │   ├── assembled/          # Composed lin() prompt markdown
+│   │   ├── modules/            # 14 decompiled functional modules
+│   │   └── raw/                # Unescaped JS bundle strings & dumps
+│   └── grok/                   # xAI Grok Build CLI
+│       ├── assembled/          # Canonical interactive & subagent prompts
+│       ├── modules/            # 11 XML tag modules (<dangerous_actions>, etc.)
+│       ├── bundled_agents/     # general-purpose.md, explore.md, plan.md
+│       ├── personas/           # 7 native TOML personas
+│       └── raw/                # Session prompt text & tool_definitions.json
 ├── extractors/
 │   ├── extract_agy_templates.py    # Go embed.FS 48-byte table parser
 │   ├── extract_claude_templates.py # Bun standalone PE bundle parser
+│   ├── extract_grok_templates.py   # Grok runtime session & XML parser
 │   └── tools/                      # 50+ reverse-engineering probes
 ├── rules/
 │   ├── developer-environment-and-toolchain-invariants.md
