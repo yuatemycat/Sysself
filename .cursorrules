@@ -1,0 +1,4 @@
+# Sysself Cursor Rules
+- Follow developer environment invariants from `rules/developer-environment-and-toolchain-invariants.md`.
+- Keep scripts portable and bounded.
+- Support Windows PowerShell 5.1 and Python 3.10+.

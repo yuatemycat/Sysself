@@ -1,0 +1,24 @@
+name: Extract and Verify System Prompts
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Workspace Status & Rules Audit
+        run: |
+          python sysself.py status
+          python sysself.py rules

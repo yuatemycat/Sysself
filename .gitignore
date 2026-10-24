@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.swp
+*.bak
+*.tmp
+venv/
+.env
+
+# Diagnostic dumps > 50MB
+*.zip
+*.tar.gz
+*.exe
+*.dll
+*.pdb
