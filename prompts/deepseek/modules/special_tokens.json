@@ -1,0 +1,11 @@
+{
+  "fim_begin": "<\uff5cfim begin\uff5c>",
+  "fim_hole": "<\uff5cfim hole\uff5c>",
+  "fim_end": "<\uff5cfim end\uff5c>",
+  "begin_of_sentence": "<\uff5cbegin of sentence\uff5c>",
+  "end_of_sentence": "<\uff5cend of sentence\uff5c>",
+  "user_token": "<\uff5cUser\uff5c>",
+  "assistant_token": "<\uff5cAssistant\uff5c>",
+  "think_begin": "<think>",
+  "think_end": "</think>"
+}

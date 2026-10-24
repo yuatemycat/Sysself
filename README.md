@@ -8,16 +8,21 @@
 
 ```mermaid
 flowchart TD
-    subgraph Binaries["Upstream Agent Executables"]
-        AGY["agy.exe (Google Antigravity CLI / Gemini)"]
+    subgraph Binaries["Upstream Agent Runtimes"]
+        AGY["agy.exe (Google Antigravity / Gemini)"]
         CLAUDE["claude.exe (Anthropic Claude Code)"]
         GROK["grok.exe (xAI Grok Build CLI)"]
+        DS["DeepSeek Models (V3, R1, Coder)"]
+        OC["OpenCode (CLI Terminal Agent)"]
+        HARN["Harnesses (Cursor, Cascade, Kiro, Qoder, Aider)"]
     end
 
-    subgraph Extractors["Sysself Extraction Suite"]
+    subgraph Extractors["Sysself Extraction & Generation Suite"]
         EXT_AGY["extract_agy_templates.py (Go embed.FS)"]
         EXT_CLAUDE["extract_claude_templates.py (Bun PE)"]
         EXT_GROK["extract_grok_templates.py (Rust Runtime / XML)"]
+        EXT_DS["extract_deepseek_templates.py (Special Tokens & FIM)"]
+        EXT_OC["extract_opencode_templates.py (JSONC & Prompts)"]
         TOOLS["50+ Reverse Engineering Probes (tools/)"]
         CLI["sysself.py Unified CLI"]
     end
@@ -26,18 +31,28 @@ flowchart TD
         P_AGY["prompts/antigravity (17 Go .tmpl & Assembled)"]
         P_CLAUDE["prompts/claude_code (14 Modules & Raw)"]
         P_GROK["prompts/grok (11 Modules, Personas & Raw)"]
+        P_DS["prompts/deepseek (R1 Think, V3 Coder, FIM)"]
+        P_OC["prompts/opencode (System Prompt & opencode.jsonc)"]
+        P_HARN["prompts/harnesses (Cursor, Windsurf, Kiro, Qoder, Aider)"]
         RULES["rules/ (11 Invariant Rulesets)"]
     end
 
     AGY --> EXT_AGY
     CLAUDE --> EXT_CLAUDE
     GROK --> EXT_GROK
+    DS --> EXT_DS
+    OC --> EXT_OC
     EXT_AGY --> P_AGY
     EXT_CLAUDE --> P_CLAUDE
     EXT_GROK --> P_GROK
+    EXT_DS --> P_DS
+    EXT_OC --> P_OC
+    HARN --> P_HARN
     CLI --> EXT_AGY
     CLI --> EXT_CLAUDE
     CLI --> EXT_GROK
+    CLI --> EXT_DS
+    CLI --> EXT_OC
 ```
 
 ## Quick Start
@@ -57,6 +72,12 @@ python sysself.py extract claude
 
 # Extract xAI Grok Build prompts and personas from ~/.grok
 python sysself.py extract grok
+
+# Generate DeepSeek reasoning & FIM specifications
+python sysself.py extract deepseek
+
+# Generate OpenCode terminal agent configurations
+python sysself.py extract opencode
 
 # Extract all agent suites simultaneously
 python sysself.py extract all
@@ -81,17 +102,31 @@ Sysself/
 │   │   ├── assembled/          # Composed lin() prompt markdown
 │   │   ├── modules/            # 14 decompiled functional modules
 │   │   └── raw/                # Unescaped JS bundle strings & dumps
-│   └── grok/                   # xAI Grok Build CLI
-│       ├── assembled/          # Canonical interactive & subagent prompts
-│       ├── modules/            # 11 XML tag modules (<dangerous_actions>, etc.)
-│       ├── bundled_agents/     # general-purpose.md, explore.md, plan.md
-│       ├── personas/           # 7 native TOML personas
-│       └── raw/                # Session prompt text & tool_definitions.json
+│   ├── grok/                   # xAI Grok Build CLI
+│   │   ├── assembled/          # Canonical interactive & subagent prompts
+│   │   ├── modules/            # 11 XML tag modules (<dangerous_actions>, etc.)
+│   │   ├── bundled_agents/     # general-purpose.md, explore.md, plan.md
+│   │   ├── personas/           # 7 native TOML personas
+│   │   └── raw/                # Session prompt text & tool_definitions.json
+│   ├── deepseek/               # DeepSeek V3, R1 Reasoner & FIM protocols
+│   │   ├── assembled/          # R1 think harness, V3 coder, FIM completion
+│   │   └── modules/            # Special tokens manifest, reasoning invariants
+│   ├── opencode/               # OpenCode autonomous terminal agent
+│   │   ├── assembled/          # OpenCode system prompt
+│   │   └── templates/          # opencode.jsonc configuration template
+│   └── harnesses/              # Coding harnesses & adapters
+│       ├── cursor/             # Cursor Composer prompt & .cursorrules spec
+│       ├── windsurf_cascade/   # Windsurf Cascade prompt & .windsurfrules spec
+│       ├── kiro/               # Amazon Q Developer CLI prompt & steering
+│       ├── qoder_codebuddy/    # Hook-driven event execution contracts
+│       └── aider/              # Architect, Code, and Ask prompt modes
 ├── extractors/
-│   ├── extract_agy_templates.py    # Go embed.FS 48-byte table parser
-│   ├── extract_claude_templates.py # Bun standalone PE bundle parser
-│   ├── extract_grok_templates.py   # Grok runtime session & XML parser
-│   └── tools/                      # 50+ reverse-engineering probes
+│   ├── extract_agy_templates.py      # Go embed.FS 48-byte table parser
+│   ├── extract_claude_templates.py   # Bun standalone PE bundle parser
+│   ├── extract_grok_templates.py     # Grok runtime session & XML parser
+│   ├── extract_deepseek_templates.py # DeepSeek prompt & token generator
+│   ├── extract_opencode_templates.py # OpenCode configuration parser
+│   └── tools/                        # 50+ reverse-engineering probes
 ├── rules/
 │   ├── developer-environment-and-toolchain-invariants.md
 │   ├── android-runtime-and-emulator-invariants.md

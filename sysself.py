@@ -66,16 +66,20 @@ def cmd_status(args):
     grok_mods = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "modules", "*.md"))
     grok_agents = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "bundled_agents", "*.md"))
     grok_personas = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "personas", "*.toml"))
+    deepseek_prompts = glob.glob(os.path.join(BASE_DIR, "prompts", "deepseek", "**", "*.md"), recursive=True)
+    opencode_prompts = glob.glob(os.path.join(BASE_DIR, "prompts", "opencode", "**", "*.*"), recursive=True)
+    harnesses_prompts = glob.glob(os.path.join(BASE_DIR, "prompts", "harnesses", "**", "*.md"), recursive=True)
     rules_files = glob.glob(os.path.join(BASE_DIR, "rules", "*.md"))
     extract_tools = glob.glob(os.path.join(BASE_DIR, "extractors", "tools", "*.py"))
 
     print(f"\n[+] Repository Inventory:")
-    print(f"  - Antigravity Templates : {len(agy_tmpls)} files")
-    print(f"  - Claude Code Modules   : {len(claude_mods)} files")
-    print(f"  - Claude Code Raw Texts : {len(claude_raws)} files")
-    print(f"  - Grok CLI Modules      : {len(grok_mods)} files")
-    print(f"  - Grok Bundled Personas : {len(grok_agents) + len(grok_personas)} items")
-    print(f"  - Invariant Rulesets    : {len(rules_files)} files")
+    print(f"  - Antigravity / Gemini  : {len(agy_tmpls)} template files")
+    print(f"  - Claude Code Suite     : {len(claude_mods)} modules, {len(claude_raws)} raw texts")
+    print(f"  - Grok CLI (xAI) Suite  : {len(grok_mods)} modules, {len(grok_agents) + len(grok_personas)} personas")
+    print(f"  - DeepSeek Suite        : {len(deepseek_prompts)} prompt & FIM specifications")
+    print(f"  - OpenCode Suite        : {len(opencode_prompts)} prompts & config templates")
+    print(f"  - Coding Harnesses      : {len(harnesses_prompts)} specs (Cursor, Cascade, Kiro, Qoder, Aider)")
+    print(f"  - Invariant Rulesets    : {len(rules_files)} rules")
     print(f"  - Extraction Tools      : {len(extract_tools)} scripts")
     print("\n[OK] Workspace is healthy and synchronized.")
 
@@ -120,6 +124,20 @@ def cmd_extract(args):
         if res.returncode != 0:
             print("[-] Failed to extract Grok CLI prompt assets.", file=sys.stderr)
 
+    if target in ("deepseek", "all"):
+        script = os.path.join(BASE_DIR, "extractors", "extract_deepseek_templates.py")
+        out_dir = os.path.join(BASE_DIR, "prompts", "deepseek")
+        res = subprocess.run([sys.executable, script, "--out", out_dir])
+        if res.returncode != 0:
+            print("[-] Failed to generate DeepSeek assets.", file=sys.stderr)
+
+    if target in ("opencode", "all"):
+        script = os.path.join(BASE_DIR, "extractors", "extract_opencode_templates.py")
+        out_dir = os.path.join(BASE_DIR, "prompts", "opencode")
+        res = subprocess.run([sys.executable, script, "--out", out_dir])
+        if res.returncode != 0:
+            print("[-] Failed to generate OpenCode assets.", file=sys.stderr)
+
 def cmd_rules(args):
     print("==================================================")
     print("  Authoritative Engineering Invariant Rulesets")
@@ -143,7 +161,7 @@ def main():
 
     # Extract
     extract_parser = subparsers.add_parser("extract", help="Run binary extractors")
-    extract_parser.add_argument("target", choices=["agy", "claude", "gemini", "antigravity", "grok", "all"], help="Extraction target (agy/gemini, claude, grok, or all)")
+    extract_parser.add_argument("target", choices=["agy", "claude", "gemini", "antigravity", "grok", "deepseek", "opencode", "harnesses", "all"], help="Extraction target")
     extract_parser.add_argument("--bin", help="Explicit path to target binary (.exe)")
 
     # Rules
