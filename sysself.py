@@ -70,7 +70,7 @@ def cmd_extract(args):
     target = args.target.lower()
     agy_bin, claude_bin = get_binary_paths()
 
-    if target in ("agy", "all"):
+    if target in ("agy", "gemini", "antigravity", "all"):
         bin_path = args.bin or agy_bin
         if not bin_path or not os.path.isfile(bin_path):
             print("[-] Error: agy.exe not found. Specify via --bin <path>", file=sys.stderr)
@@ -121,7 +121,7 @@ def main():
 
     # Extract
     extract_parser = subparsers.add_parser("extract", help="Run binary extractors")
-    extract_parser.add_argument("target", choices=["agy", "claude", "all"], help="Extraction target")
+    extract_parser.add_argument("target", choices=["agy", "claude", "gemini", "antigravity", "all"], help="Extraction target (agy/gemini, claude, or all)")
     extract_parser.add_argument("--bin", help="Explicit path to target binary (.exe)")
 
     # Rules
