@@ -62,7 +62,8 @@ def cmd_status(args):
 
     agy_tmpls = glob.glob(os.path.join(BASE_DIR, "prompts", "antigravity", "templates", "*.tmpl"))
     claude_mods = glob.glob(os.path.join(BASE_DIR, "prompts", "claude_code", "modules", "*.md"))
-    claude_raws = glob.glob(os.path.join(BASE_DIR, "prompts", "claude_code", "raw", "*.txt"))
+    claude_skills = glob.glob(os.path.join(BASE_DIR, "prompts", "claude_code", "bundled_skills", "**", "*.*"), recursive=True)
+    claude_raws = glob.glob(os.path.join(BASE_DIR, "prompts", "claude_code", "raw", "*.*"))
     grok_mods = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "modules", "*.md"))
     grok_agents = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "bundled_agents", "*.md"))
     grok_personas = glob.glob(os.path.join(BASE_DIR, "prompts", "grok", "personas", "*.toml"))
@@ -74,7 +75,7 @@ def cmd_status(args):
 
     print(f"\n[+] Repository Inventory:")
     print(f"  - Antigravity / Gemini  : {len(agy_tmpls)} template files")
-    print(f"  - Claude Code Suite     : {len(claude_mods)} modules, {len(claude_raws)} raw texts")
+    print(f"  - Claude Code Suite     : {len(claude_mods)} modules, {len(claude_skills)} bundled skills, {len(claude_raws)} raw texts")
     print(f"  - Grok CLI (xAI) Suite  : {len(grok_mods)} modules, {len(grok_agents) + len(grok_personas)} personas")
     print(f"  - DeepSeek Suite        : {len(deepseek_prompts)} prompt & FIM specifications")
     print(f"  - OpenCode Suite        : {len(opencode_prompts)} prompts & config templates")
