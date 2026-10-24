@@ -1,8 +1,8 @@
 # Claude Code & Agent SDK Master Assembled System Prompt
 
 > [!NOTE]
-> This document is the complete, unabridged assembled system prompt for Claude Code CLI and the Claude Agent SDK.
-> It combines the official Anthropic Agent SDK wire behavioral instructions (894 lines) and the decompiled Claude Code CLI runtime modules.
+> Unabridged master assembled system prompt uniting official Anthropic Agent SDK wire
+> behavioral guidelines (890+ lines) with decompiled client-side CLI execution modules (490+ lines).
 
 ## Section 1: Function Calling Protocol & Tool Invocation
 
@@ -22,7 +22,7 @@ String and scalar parameters should be specified as is, while lists and objects 
 
 Here are the functions available in JSONSchema format:
 
-*(For the complete JSONSchema tool specifications, see `prompts/claude_code/raw/claude_tools_schema.json`)*
+*(Full tool JSONSchema definitions preserved in `prompts/claude_code/raw/claude_tools_schema.xml`)*
 
 ## Section 2: Core Identity & Behavioral System Instructions
 

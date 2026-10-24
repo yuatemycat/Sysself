@@ -132,6 +132,18 @@ def cmd_extract(args):
         if res.returncode != 0:
             print("[-] Failed to generate DeepSeek assets.", file=sys.stderr)
 
+    if target in ("wire", "live", "claude_wire", "all"):
+        script = os.path.join(BASE_DIR, "extractors", "capture_live_prompt.py")
+        cmd = [sys.executable, script]
+        if hasattr(args, "file") and args.file:
+            cmd.extend(["--file", args.file])
+        else:
+            cmd.append("--auto")
+        print(f"[*] Extracting live wire system prompt & bundled skills...")
+        res = subprocess.run(cmd)
+        if res.returncode != 0:
+            print("[-] Warning: Failed to extract live wire prompts.", file=sys.stderr)
+
     if target in ("opencode", "all"):
         script = os.path.join(BASE_DIR, "extractors", "extract_opencode_templates.py")
         out_dir = os.path.join(BASE_DIR, "prompts", "opencode")
@@ -161,9 +173,14 @@ def main():
     subparsers.add_parser("status", help="Show workspace status and binary inventory")
 
     # Extract
-    extract_parser = subparsers.add_parser("extract", help="Run binary extractors")
-    extract_parser.add_argument("target", choices=["agy", "claude", "gemini", "antigravity", "grok", "deepseek", "opencode", "harnesses", "all"], help="Extraction target")
+    extract_parser = subparsers.add_parser("extract", help="Run binary & wire prompt extractors")
+    extract_parser.add_argument("target", choices=["agy", "claude", "gemini", "antigravity", "grok", "deepseek", "opencode", "wire", "live", "harnesses", "all"], help="Extraction target")
     extract_parser.add_argument("--bin", help="Explicit path to target binary (.exe)")
+    extract_parser.add_argument("--file", "-f", help="Explicit path to wire capture / message dump file")
+
+    # Listen / Sniff
+    listen_parser = subparsers.add_parser("listen", help="Start transparent HTTP prompt interceptor on localhost")
+    listen_parser.add_argument("--port", "-p", type=int, default=8082, help="Port to listen on (default: 8082)")
 
     # Rules
     subparsers.add_parser("rules", help="List and verify engineering rulesets")
@@ -177,6 +194,9 @@ def main():
         cmd_status(args)
     elif args.command == "extract":
         cmd_extract(args)
+    elif args.command == "listen":
+        script = os.path.join(BASE_DIR, "extractors", "capture_live_prompt.py")
+        subprocess.run([sys.executable, script, "--listen", str(args.port)])
     elif args.command == "rules":
         cmd_rules(args)
 
