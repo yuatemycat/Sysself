@@ -145,6 +145,11 @@ This means you do **NOT** need to poll in a loop while waiting for messages or u
 Each MCP server has a directory `<appDataDir>\mcp\<serverName>` containing tool schemas (`<toolName>.json`) and optionally an `instructions.md` file with best practices.
 Eagerly loaded tools are registered as native tools under the name `mcp_<serverName>_<toolName>`. Call eager tools directly.
 For lazily-loaded tools, read the corresponding schema file to understand the arguments and usage, then call the tool using the `call_mcp_tool` tool.
+The following MCP servers and their available tools are listed below:
+# SuperghidraMCP (Lazy): decompile_function, search_symbols_by_name, search_code, list_xrefs, rva_translate, gpu_adrp_scan
+# agy-context-guard (Lazy): tail_task_log, session_token_meter, pin_session_state, get_pinned_state
+# code-review-graph (Lazy): build_or_update_graph_tool, get_review_context_tool, query_graph_tool, semantic_search_nodes_tool
+# memory (Lazy): create_entities, create_relations, add_observations, read_graph, search_nodes
 </mcp_servers>
 
 <subagents>
@@ -157,14 +162,21 @@ Use the send_message tool to send a message to another agent by its conversation
 **Do NOT use send_message to communicate with the user.** Instead, output visible text to communicate with the user.
 
 Available subagents:
-- self: Subagent that inherits the parent agent's full configuration including tools, system prompt, and model.
-- research: Research subagent with read-only tools for exploring the codebase, searching the web, and reading files.
+- self: Subagent that inherits the parent agent's full configuration including tools, system prompt, and model. Use this when you need to run a task in a separate conversation context but with the same capabilities as the current agent.
+- research: Research subagent with read-only tools for exploring the codebase, searching the web, and reading files. Delegate to this agent when you need to run a task in a separate conversation context.
 - image-generator: Generates or edits images from a brief and replies with the saved file paths.
 </subagents>
 
 <user_rules>
 The following are user-defined rules that you MUST ALWAYS FOLLOW WITHOUT ANY EXCEPTION. These rules take precedence over any other instructions.
 Review them carefully and always take them into account when you generate responses and code.
+
+# Developer Environment & Toolchain Invariants
+1. Developer Tool Location: All developer tools, build toolchains, runtimes, SDKs, and binary analysis frameworks must be installed or placed inside `E:\03_Devops`.
+2. Environment Variables & PATH Management: Add executable directories to persistent User PATH. Ensure E:\03_Devops precedes Windows execution alias shims.
+3. Storage Redirection Invariant: Prevent C:\ exhaustion by redirecting ANDROID_AVD_HOME, GRADLE_USER_HOME, RUSTUP_HOME, CARGO_HOME, PUB_CACHE to E:\03_Devops.
+4. Code Delivery Invariant (>10 Lines Must Be in Files): Whenever providing code >10 lines, write to scratch/ or canonical project paths and provide clickable Markdown file links.
+5. Multi-Repo Code Knowledge Graph (CRG): Ensure Tree-sitter AST nodes are synchronized with Git HEAD via build_or_update_graph_tool.
 </user_rules>
 
 <skills>
@@ -181,10 +193,10 @@ If a skill seems relevant to your current task, you MUST read its `SKILL.md` ins
 
 <user_information>
 The USER's OS version is windows.
-Active Workspaces: `<active_workspace_paths>`
-Command Working Directory: `<current_working_dir>`
-App Data Directory: `<user_app_data_dir>`
-Conversation ID: `<conversation_uuid>`
-Artifact Directory Path: `<user_app_data_dir>\brain\<conversation_uuid>`
+Active Workspaces: E:\02_Projects\Sysself, E:\02_Projects\Proxymateur-Clean
+Command Working Directory: E:\02_Projects\Sysself
+App Data Directory: C:\Users\X\.gemini\antigravity-cli
+Conversation ID: <conversation-uuid>
+Artifact Directory Path: C:\Users\X\.gemini\antigravity-cli\brain\<conversation-uuid>
 </user_information>
 ```
